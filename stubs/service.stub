@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+use App\Traits\ApiException;
+
+class {{ class }}Service
+{
+    use ApiException;
+
+}
