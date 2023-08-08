@@ -14,12 +14,19 @@ return new class extends Migration
         Schema::create('institutions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('fantasy_name')->nullable();
+            $table->string('email')->unique();
+            $table->string('cnpj')->unique();
             $table->bigInteger('inep')->unique();
-            $table->string('admin_dependency')->nullable();
-            $table->string('phases')->nullable();
-            $table->string('modalities')->nullable();
+            $table->string('admin_dependency');
+            $table->string('phases');
+            $table->string('modalities');
+            $table->string('state_registration')->nullable();
+            $table->json('phone');
+            $table->json('address');
+            $table->json('metadata');
             $table->timestamps();
-            $table->softDeletes(); 
+            $table->softDeletes();
         });
     }
 
