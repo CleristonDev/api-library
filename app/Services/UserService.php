@@ -10,9 +10,17 @@ class UserService
 {
     use ApiException;
 
+    /**
+     * List all user with pagination.
+     */
     public function listAll(array $data): LengthAwarePaginator
     {
         $users = User::query();
+
+        if(! isset($data['perPage'])){
+            $this->badRequestException('O mano, coloca a quantidade de itens por página.');
+        }
+
         return $users->paginate($data['perPage'] ?? 10);
     }
 
@@ -30,6 +38,9 @@ class UserService
         return $user;
     }
 
+    /**
+     * clear data to create or update
+     */
     private function sanitazeData(array &$data, User $user=null): array
     {
          if($user){
@@ -40,7 +51,7 @@ class UserService
         return [
             ...$data,
             'password' => bcrypt($data['password']),
-            'username' => 'RA' . Str::random(6),
+            'username' => 'RA' . Str::random(6), // TODO: Criar helper para gerar username
             'status' => $data['status'] ?? 'active',
         ];
     }

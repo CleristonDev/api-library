@@ -49,4 +49,15 @@ trait ApiException
     {
         throw new LibraryException($exception, 404);
     }
+
+    /**
+     * Return a server error exception.
+     *
+     * @param array|string $exception
+     * @return void
+     */
+    public function serverErrorException(array|string $exception): void
+    {
+        throw new LibraryException($exception, 500);
+    }
 }

@@ -12,9 +12,12 @@ class UserController extends Controller
 {
 
     use ApiResponse;
+
+    /**
+     * List all user with pagination.
+     */
     public function listAll(UserService $userService, Request $request): JsonResponse
     {
-
         return $this->ok($userService->listAll($request->all()));
     }
 

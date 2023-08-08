@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response;
 
 class LibraryException extends Exception
 {
+
     protected $errors;
 
     protected $code;
