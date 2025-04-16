@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Services;
+
 use App\Models\User;
+use App\Enums\UserStatus;
 use Illuminate\Support\Str;
 use App\Traits\ApiException;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendConfimedUserAccount;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserService
@@ -17,7 +21,7 @@ class UserService
     {
         $users = User::query();
 
-        if(! isset($data['perPage'])){
+        if(! isset($data['perPage'])) {
             $this->badRequestException('O mano, coloca a quantidade de itens por página.');
         }
 
@@ -28,6 +32,11 @@ class UserService
     {
         $sanitaze = $this->sanitazeData($data);
         $user = User::create($sanitaze);
+
+
+        if($user) {
+            Mail::to($user->email)->send(new SendConfimedUserAccount($user));
+        }
         return $user;
     }
 
@@ -43,16 +52,18 @@ class UserService
      */
     private function sanitazeData(array &$data, User $user=null): array
     {
-         if($user){
+        if($user) {
             return [
                 'password' => $data['password'] ?? $user->password,
             ];
-         }
+        }
         return [
             ...$data,
+            'institution_id' => $data['institution_id'],
             'password' => bcrypt($data['password']),
-            'username' => 'RA' . Str::random(6), // TODO: Criar helper para gerar username
-            'status' => $data['status'] ?? 'active',
+            'username' => generateUsername($data['name']),
+            'token' => generateRandomCode(4),
+            'status' => UserStatus::PENDING_CONFIRMATION(),
         ];
     }
 

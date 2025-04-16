@@ -4,27 +4,30 @@ namespace App\Services\auth;
 
 use Exception;
 use App\Models\User;
+use App\Services\InstitutionService;
 use App\Traits\ApiException;
-use App\Services\UserService;
 
 class AuthService
 {
     use ApiException;
+
+    private InstitutionService $institutionService;
+    public function __construct(
+        InstitutionService $institutionService
+    ) {
+        $this->institutionService = $institutionService;
+    }
     public function register(array $data): array
     {
+
         try {
-            $userService = new UserService();
-            $user = $userService->create($data);
-            $token = $this->generateToken($user);
-            $user->token = $token;
+            $institution = $this->institutionService->create($data);
             return [
-                'token' => $token,
-                'user' => $user,
+                'institution' => $institution,
             ];
         } catch (\Throwable $th) {
-            $this->badRequestException('Não foi possível criar o usuário: '.$th->getMessage());
-        } catch (Exception $e) {
-            $this->serverErrorException($e->getMessage());
+            throw $th;
+            $this->badRequestException('Não foi possível criar o usuário: ');
         }
 
     }
